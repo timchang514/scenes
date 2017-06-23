@@ -57,5 +57,8 @@
     "rollup-watch": "^3.2.2",
     "uglify-js": "^2.6.0",
     "electron": "^1.6.1"
+  },
+  "dependencies": {
+    "eslint-config-mdcs": "^4.2.2"
   }
 }
