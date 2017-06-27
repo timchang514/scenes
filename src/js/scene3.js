@@ -5,7 +5,7 @@ init()
 animate()
 
 function init() {
-	camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 500) // fov, aspect ratio, near plane, far plane
+	camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000) // fov, aspect ratio, near plane, far plane
 	scene = new THREE.Scene()
 	renderer = new THREE.CanvasRenderer()
 	controls = new THREE.OrbitControls(camera, renderer.domElements)
@@ -45,32 +45,23 @@ function render() {
 
 function makeStars() {
 	var PI2 = Math.PI * 2
-	program = function (context) {
-		let glowSize = 0;
-		let radius = 0.15;
-		let hue = 50, sat = 100, lum = 100
 
-		context.beginPath();
-		context.arc(0, 0, radius, 0, PI2, true);
-		context.fill();
-		context.lineWidth = 0.02;
-
-		for (let i = 0; i < glowSize; i++) {
-			context.beginPath();
-			sat -= 100/glowSize;
-			lum -= 100/glowSize;
-			context.strokeStyle = "hsl(" + hue + "," + sat + "%," + lum + "%)"	// Eventually link radius and hue to actual radius of star
-			context.arc(0,0,radius,0,PI2,true)
-			context.stroke()
-			radius+= 0.009
-		}
+	program = function (ctx, color) {
+		var gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 2);
+		ctx.beginPath()
+		gradient.addColorStop(0, 'white')
+		gradient.addColorStop(1, 'black')
+		ctx.arc(0, 0, 1, 0, PI2)
+		ctx.fillStyle = gradient
+		console.log("generic")
+		ctx.fill()
 	};
 
 	group = new THREE.Group();
 	scene.add(group);
 	material = new THREE.SpriteCanvasMaterial({
 		color: 0xFFFFFF,
-		program: program
+		program: program,
 	});
 
 	let counter = 0;
@@ -78,16 +69,27 @@ function makeStars() {
 		download: true,
 		step: function(row) {
 			if (counter % 1 === 0) {
-				particle = new THREE.Sprite(material);
+				// Star color
 				let colorindex = row.data[0][16]
 				let rgb = bvtorgb(colorindex)
 				material = new THREE.SpriteCanvasMaterial({
-					color: new THREE.Color(rgb[0], rgb[1], rgb[2]),
-					program: program
+					program: function (ctx, color) {
+						var gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+						ctx.beginPath()
+						gradient.addColorStop(0, "white")
+						gradient.addColorStop(0.4, "rgb(" + Math.trunc(rgb[0]*255) + "," + Math.trunc(rgb[1]*255) + "," + Math.trunc(rgb[2]*255) + ")")
+						gradient.addColorStop(0.5, "rgba(" + Math.trunc(rgb[0]*255) + "," + Math.trunc(rgb[1]*255) + "," + Math.trunc(rgb[2]*255) + ", 0.7)")
+						gradient.addColorStop(1, "rgba(0,0,0,0)")
+						ctx.arc(0, 0, 1, 0, PI2)
+						ctx.fillStyle = gradient
+						ctx.fill()
+					}
 				});
-				particle.position.x = row.data[0][17] * 10
-				particle.position.y = row.data[0][18] * 10
-				particle.position.z = row.data[0][19] * 10
+
+				particle = new THREE.Sprite(material)
+				particle.position.x = row.data[0][17] * 30
+				particle.position.y = row.data[0][18] * 30
+				particle.position.z = row.data[0][19] * 30
 				if (particle.position.x && particle.position.y && particle.position.z) {
 					group.add(particle)
 				}
