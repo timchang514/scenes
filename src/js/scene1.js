@@ -79,6 +79,7 @@ function init() {
 		new THREE.PlaneBufferGeometry( parameters.width * 300, parameters.height * 300 ),
 		water.material
 	);
+	// TODO: Improve water looks to be more realistic
 	mirrorMesh.add( water );
 	mirrorMesh.rotation.x = - Math.PI * 0.5;
 	scene.add( mirrorMesh );
@@ -86,6 +87,7 @@ function init() {
 	var landGeo = new THREE.SphereGeometry(500, 50, 50)
 	var landLoader = new THREE.TextureLoader
 
+	// TODO: Add island
 }
 
 function animate() {
