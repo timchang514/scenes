@@ -2,7 +2,7 @@ let camera, scene, renderer, container, controls
 let points, pointMaterial, pointSystem
 let skybox
 let wind = new THREE.Vector3(Math.random(0, 50), Math.random(0, 50), Math.random(0, 50))
-let pCount = 50000
+let pCount = 10000
 
 init()
 animate()
@@ -13,7 +13,7 @@ function init() {
 	camera.position.set( 1500, 750, 200 );
 
 	scene = new THREE.Scene()
-	scene.fog = new THREE.FogExp2( 0x000000, 0.0008 )
+//	scene.fog = new THREE.FogExp2( 0x000000, 0.0008 )
 
 	renderer = new THREE.WebGLRenderer()
 	renderer.setClearColor(0xf0f0f0)
@@ -25,7 +25,7 @@ function init() {
 
 	controls = new THREE.OrbitControls(camera, renderer.domElements)
 
-	scene.add( new THREE.AmbientLight( 0xFFFFFF ) );
+	scene.add(new THREE.AmbientLight(0xFFFFFF));
 
 	// Initialize particles
 	points = new THREE.Geometry()
@@ -48,9 +48,9 @@ function init() {
 	})
 	for (let i = 0; i < pCount; i++) {
 		let px, py, pz
-		px = Math.random() * 2000 - 900
-		py = Math.random() * 2000 - 900
-		pz = Math.random() * 2000 - 900
+		px = Math.random() * 10000 - 5000
+		py = Math.random() * 10000 - 5000
+		pz = Math.random() * 10000 - 5000
 		let point = new THREE.Vector3(px, py, pz)
 		point.velocity = new THREE.Vector3(0, -10, 0)
 		points.vertices.push(point)
@@ -59,14 +59,38 @@ function init() {
 	scene.add(pointSystem)
 
 	// Create box
-	var skyGeo = new THREE.BoxBufferGeometry(2500, 2500, 2500)
-	var skyLoader = new THREE.TextureLoader()
-	var skyMtl = new THREE.MeshPhongMaterial({							// Set the image and overdraw (to prevent extra lines being drawn)
-        map: skyLoader.load("src/img/night.jpg"), overdraw: 0.5	// Note: not sure if we can use this image
-	});
-	var sky = new THREE.Mesh(skyGeo, skyMtl);								// Create sky mesh from geometry and material
-	sky.material.side = THREE.DoubleSide;
-	scene.add(sky)
+	var materials = [];
+  var t = [];
+
+  var loader = new THREE.TextureLoader();
+  for (var i = 0; i < 6; i++) {
+      t[i] = loader.load("src/img/night_2.jpg", render); //2048x256 // changed
+      t[i].repeat.x  = 1 / 4;
+			t[i].repeat.y = 1 / 3;
+			t[i].minFilter = THREE.NearestFilter;
+      t[i].generateMipmaps = false;
+			t[i].wrapS = t[i].wrapT = THREE.RepeatWrapping
+  }
+	t[0].offset.x = 2 / 4;
+	t[0].offset.y = 1 / 3;
+	t[1].offset.x = 0 / 4;
+	t[1].offset.y = 1 / 3;
+	t[2].offset.x = 1 / 4;
+	t[2].offset.y = 2 / 3;
+	t[3].offset.x = 1 / 4;
+	t[3].offset.y = 0 / 3;
+	t[4].offset.x = 1 / 4;
+	t[4].offset.y = 1 / 3;
+	t[5].offset.x = 3 / 4;
+	t[5].offset.y = 1 / 3;
+	for (var i = 0; i < 6; i++) {
+      materials.push( new THREE.MeshBasicMaterial( { map: t[i], side: THREE.BackSide } ) );
+  }
+
+  var skyBox = new THREE.Mesh( new THREE.CubeGeometry(10000, 10000, 10000), materials);
+  // skyBox.applyMatrix( new THREE.Matrix4().makeScale( 1, 1, -1 ) );
+	// skyBox.material.side = THREE.DoubleSide;
+  scene.add( skyBox );
 }
 
 function animate() {
@@ -90,7 +114,7 @@ function drawParticles() {
 		point.y += wind.y
 		point.z += wind.z
 
-		let pointThresh = 1000
+		let pointThresh = 6000
 		if (Math.random() > 0.9) {
 			if (Math.abs(point.x) > pointThresh) {
 				point.x *= -1
