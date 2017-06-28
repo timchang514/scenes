@@ -44,12 +44,11 @@ function init() {
 	controls.enablePan = false;
 	controls.minDistance = 1000.0;
 	controls.maxDistance = 5000.0;
-	controls.maxPolarAngle = Math.PI * 0.495;
 	controls.target.set( 0, 500, 0 );
 	scene.add( new THREE.AmbientLight( 0xFFFFFF ) );
 
 	// Light
-	var light = new THREE.DirectionalLight( 0x222222, 1 );
+	var light = new THREE.DirectionalLight( 0x222222, 2);
 	light.position.set( - 1, 1, - 1 );
 	scene.add( light );
 
@@ -88,6 +87,7 @@ function init() {
 	var landLoader = new THREE.TextureLoader
 
 	// TODO: Add island
+	var
 }
 
 function animate() {

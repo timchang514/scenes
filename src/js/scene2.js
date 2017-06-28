@@ -1,5 +1,5 @@
 let camera, controls, scene, renderer
-let group, particle, earth
+let group, particle, earth, moon, parent, pivot
 
 init()
 animate()
@@ -15,15 +15,32 @@ function init() {
 	document.body.appendChild(renderer.domElement)
 
 	// earth
+	let earthradius = 5;
 	let loader = new THREE.TextureLoader();
 	loader.load('src/img/earth_atmos_4096.jpg', function(texture) {
-		let geometry = new THREE.SphereGeometry(5, 20, 20)
+		let geometry = new THREE.SphereGeometry(earthradius, 20, 20)
 		let material = new THREE.MeshBasicMaterial({map: texture, overdraw: 0.5})
 		earth = new THREE.Mesh(geometry, material)
 		earth.position.z = -15
 		earth.rotation.x = 0.4101
 		earth.rotation.y = 0
 		group.add(earth)
+	})
+
+	// moon
+	loader.load('src/img/moon_1024.jpg', function(texture) {
+		let geometry = new THREE.SphereGeometry(1.42, 20, 20)
+		let material = new THREE.MeshBasicMaterial({map: texture, overdraw: 0.5})
+		pivot = new THREE.Object3D()
+		moon = new THREE.Mesh(geometry, material)
+		moon.position.x = 10
+		moon.position.y = -10
+		moon.position.z = -20
+		moon.rotation.x = 10;
+
+		pivot.rotation.z = 0;
+		group.add(pivot)
+		pivot.add(moon)
 	})
 
 	makeStars()
@@ -33,8 +50,11 @@ function init() {
 
 function animate() {
 	requestAnimationFrame(animate)
+	let rot_speed = 0.002
 	try {
-		earth.rotation.y += 0.004
+		earth.rotation.y += rot_speed
+		moon.rotation.y += (rot_speed*12)
+		pivot.rotation.z += -(rot_speed)
 	} catch(e) {
 
 	}
@@ -90,7 +110,7 @@ function makeStars() {
 
 				// Spectral
 				let spectral = row.data[0][15]
-				console.log(spectral)
+				// console.log(spectral)
 				//TODO: Modify star color and rendering with spectral type
 
 				// Star Location
