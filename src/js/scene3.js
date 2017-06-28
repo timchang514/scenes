@@ -1,7 +1,8 @@
 let camera, scene, renderer, container, controls
 let points, pointMaterial, pointSystem
 let skybox
-let wind = new THREE.Vector3(Math.random(0, 50), Math.random(0, 50), Math.random(0, 50))
+let wind = new THREE.Vector3(Math.random(-50, 50), Math.random(-50, 50), Math.random(-50, 50))
+let windRota = new THREE.Vector3(Math.random(), Math.random(), Math.random())
 let pCount = 10000
 
 init()
@@ -24,6 +25,7 @@ function init() {
 	container.appendChild(renderer.domElement)
 
 	controls = new THREE.OrbitControls(camera, renderer.domElements)
+
 
 	scene.add(new THREE.AmbientLight(0xFFFFFF));
 
@@ -57,6 +59,7 @@ function init() {
 	}
 	pointSystem = new THREE.Points(points, pointMaterial)
 	scene.add(pointSystem)
+	console.log(pointSystem)
 
 	// Create box
 	var materials = [];
@@ -114,7 +117,11 @@ function drawParticles() {
 		point.y += wind.y
 		point.z += wind.z
 
-		let pointThresh = 6000
+		// point.rotation.x += windRota.x
+		// point.rotation.y += windRota.y
+		// point.rotation.z += windRota.z
+
+		let pointThresh = 4000
 		if (Math.random() > 0.9) {
 			if (Math.abs(point.x) > pointThresh) {
 				point.x *= -1
@@ -127,8 +134,9 @@ function drawParticles() {
 			}
 		}
 
-		if (Math.random() > 0.95) {
-			wind = new THREE.Vector3(Math.random(0, 50), Math.random(0, 50), Math.random(0, 50))
+		if (Math.random() > 0.96) {
+			wind = new THREE.Vector3(Math.random(10, 50), Math.random(10, 50), Math.random(10, 50))
+			windRota = new THREE.Vector3(Math.random(), Math.random(), Math.random())
 		}
 		points.verticesNeedUpdate = true
 	}
