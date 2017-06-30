@@ -8,22 +8,26 @@
 // init camera, scene, renderer
 var scene, camera, controls, renderer, clock
 var tuniform, water
+var lastX, lastY
 
 init()
 animate()
 
 function init() {
 	scene = new THREE.Scene();
-	camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+	camera = new THREE.PerspectiveCamera(75, 800/600, 0.1, 1000);
 	camera.position.z = 50;
 	camera.position.y = 130;
 
-	controls = new THREE.OrbitControls(camera)
+	//controls = new THREE.OrbitControls(camera)
 	renderer = new THREE.WebGLRenderer();
 	renderer.setClearColor(0xc4c4c4);
-	renderer.setSize(window.innerWidth, window.innerHeight);
+	renderer.setSize(800, 600);
 	document.body.appendChild(renderer.domElement);
 	clock = new THREE.Clock();
+
+	lastX = renderer.domElement.getBoundingClientRect().left
+	lastY = renderer.domElement.getBoundingClientRect().top
 
 	tuniform = {
 		iGlobalTime: {
@@ -47,19 +51,7 @@ function init() {
 		tuniform.iMouse.value.x = (e.clientX - rect.left) / window.innerWidth * 2 - 1;
 		tuniform.iMouse.value.y = (e.clientY - rect.top) / window.innerHeight * -2 + 1;
 	});
-	renderer.domElement.addEventListener('touchstart', function(e) {
-		var canvas = renderer.domElement;
-		var rect = canvas.getBoundingClientRect();
-		tuniform.iMouse.value.x = (e.clientX - rect.left) / window.innerWidth * 2 - 1;
-		tuniform.iMouse.value.y = (e.clientY - rect.top) / window.innerHeight * -2 + 1;
-	});
 	renderer.domElement.addEventListener('mouseup', function(e) {
-		var canvas = renderer.domElement;
-		var rect = canvas.getBoundingClientRect();
-		tuniform.iMouse.value.z = (e.clientX - rect.left) / window.innerWidth * 2 - 1;
-		tuniform.iMouse.value.w = (e.clientY - rect.top) / window.innerHeight * -2 + 1;
-	});
-	renderer.domElement.addEventListener('touchend', function(e) {
 		var canvas = renderer.domElement;
 		var rect = canvas.getBoundingClientRect();
 		tuniform.iMouse.value.z = (e.clientX - rect.left) / window.innerWidth * 2 - 1;
@@ -72,8 +64,8 @@ function init() {
 		renderer.setSize(window.innerWidth, window.innerHeight);
 	});
 
-	tuniform.iResolution.value.x = window.innerWidth;
-	tuniform.iResolution.value.y = window.innerHeight;
+	tuniform.iResolution.value.x = 800;
+	tuniform.iResolution.value.y = 600;
 	// Create Plane
 	var material = new THREE.ShaderMaterial({
 		uniforms: tuniform,
@@ -81,7 +73,7 @@ function init() {
 		fragmentShader: document.getElementById('fragment-shader').textContent
 	});
 	water = new THREE.Mesh(
-		new THREE.PlaneBufferGeometry(window.innerWidth, window.innerHeight, 40), material
+		new THREE.PlaneBufferGeometry(800, 600, 40), material
 	);
 	// water = new THREE.Mesh(
 	// 	new THREE.PlaneBufferGeometry(window.innerWidth, window.innerHeight, 40)
@@ -96,7 +88,7 @@ function animate() {
 
 // draw animation
 function render(time) {
-	tuniform.iGlobalTime.value += clock.getDelta()/2;
+	tuniform.iGlobalTime.value += clock.getDelta();
 	requestAnimationFrame(render);
 	renderer.render(scene, camera);
 }
