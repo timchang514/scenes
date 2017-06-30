@@ -2,7 +2,8 @@ var container, stats
 var camera, scene, renderer
 var controls, group
 
-var water
+let water
+let lastTime = (new Date()).getTime();
 
 // HELP
 
@@ -61,33 +62,66 @@ function init() {
 		param: 4,
 		filterparam: 1
 	};
-	var waterNormals = new THREE.TextureLoader().load('examples/textures/waternormals.jpg');
-	waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping;
-	water = new THREE.Water( renderer, camera, scene, {
-		textureWidth: 512,
-		textureHeight: 512,
-		waterNormals: waterNormals,
-		alpha: 	1.0,
-		sunDirection: light.position.clone().normalize(),
-		sunColor: 0xffffff,
-		waterColor: 0xffffff,
-		distortionScale: 0.0,
-		fog: scene.fog != undefined
-	});
-	var mirrorMesh = new THREE.Mesh(
-		new THREE.PlaneBufferGeometry( parameters.width * 300, parameters.height * 300 ),
-		water.material
-	);
-	// TODO: Improve water looks to be more realistic
-	mirrorMesh.add( water );
-	mirrorMesh.rotation.x = - Math.PI * 0.5;
-	scene.add( mirrorMesh );
 
-	var landGeo = new THREE.SphereGeometry(500, 50, 50)
-	var landLoader = new THREE.TextureLoader
+	ocean = new THREE.Ocean(renderer, camera, scene, {
+		USE_HALF_FLOAT : true,
+		INITIAL_SIZE : 256.0,
+		INITIAL_WIND : [10.0, 10.0],
+		INITIAL_CHOPPINESS : 0.5,
+		CLEAR_COLOR : [1.0, 1.0, 1.0, 0.0],
+		GEOMETRY_ORIGIN : [-256, -256],
+		SUN_DIRECTION : [-1.0, 1.0, 1.0],
+		OCEAN_COLOR: new THREE.Vector3(0.004, 0.016, 0.047),
+		SKY_COLOR: new THREE.Vector3(3.2, 9.6, 12.8),
+		EXPOSURE : 0.35,
+		GEOMETRY_RESOLUTION: 512,
+		GEOMETRY_SIZE : 2048,
+		RESOLUTION : 1024
+	})
+	ocean.materialOcean.uniforms.u_projectionMatrix = { value: camera.projectionMatrix };
+	ocean.materialOcean.uniforms.u_viewMatrix = { value: camera.matrixWorldInverse };
+	ocean.materialOcean.uniforms.u_cameraPosition = { value: camera.position };
+	scene.add(ocean.oceanMesh);
+
+
 
 	// TODO: Add island
-	var
+	var geometry = new THREE.PlaneGeometry(1500, 1500)
+	geometry.applyMatrix(new THREE.Matrix4().makeRotationX(Math.PI / 2));
+
+	var grassTex = THREE.ImageUtils.loadTexture('src/img/grasslight-big.jpg');
+  grassTex.wrapS = THREE.RepeatWrapping;
+  grassTex.wrapT = THREE.RepeatWrapping;
+  grassTex.repeat.x = 16;
+  grassTex.repeat.y = 16;
+
+  var material = new THREE.MeshLambertMaterial( { color: 0x00ff00, wireframe:false, side:THREE.DoubleSide, map:grassTex } );
+  // generateHeight(worldWidth, smoothinFactor, boundaryHeight, treeNumber);
+
+	let island = new THREE.Mesh( geometry, material );
+	//scene.add(island);
+}
+
+function update() {
+	var currentTime = new Date().getTime();
+		ocean.deltaTime = (currentTime - lastTime) / 1000 || 0.0;
+		lastTime = currentTime;
+		ocean.render(ocean.deltaTime);
+		ocean.overrideMaterial = ocean.materialOcean;
+		if (ocean.changed) {
+			ocean.materialOcean.uniforms.u_size.value = ocean.size;
+			ocean.materialOcean.uniforms.u_sunDirection.value.set( ocean.sunDirectionX, ocean.sunDirectionY, ocean.sunDirectionZ );
+			ocean.materialOcean.uniforms.u_exposure.value = ocean.exposure;
+			ocean.changed = false;
+		}
+		ocean.materialOcean.uniforms.u_normalMap.value = ocean.normalMapFramebuffer.texture;
+		ocean.materialOcean.uniforms.u_displacementMap.value = ocean.displacementMapFramebuffer.texture;
+		ocean.materialOcean.uniforms.u_projectionMatrix.value = camera.projectionMatrix;
+		ocean.materialOcean.uniforms.u_viewMatrix.value = camera.matrixWorldInverse;
+		ocean.materialOcean.uniforms.u_cameraPosition.value = camera.position;
+		ocean.materialOcean.depthTest = true;
+		//this.ms_Scene.__lights[1].position.x = this.ms_Scene.__lights[1].position.x + 0.01;
+		//controls.update();
 }
 
 function animate() {
@@ -96,7 +130,6 @@ function animate() {
 }
 
 function render() {
-	water.material.uniforms.time.value += 2.0 / 60.0;
-	water.render();
+	update()
 	renderer.render( scene, camera );
 }
