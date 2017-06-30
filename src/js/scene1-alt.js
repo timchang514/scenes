@@ -47,7 +47,19 @@ function init() {
 		tuniform.iMouse.value.x = (e.clientX - rect.left) / window.innerWidth * 2 - 1;
 		tuniform.iMouse.value.y = (e.clientY - rect.top) / window.innerHeight * -2 + 1;
 	});
+	renderer.domElement.addEventListener('touchstart', function(e) {
+		var canvas = renderer.domElement;
+		var rect = canvas.getBoundingClientRect();
+		tuniform.iMouse.value.x = (e.clientX - rect.left) / window.innerWidth * 2 - 1;
+		tuniform.iMouse.value.y = (e.clientY - rect.top) / window.innerHeight * -2 + 1;
+	});
 	renderer.domElement.addEventListener('mouseup', function(e) {
+		var canvas = renderer.domElement;
+		var rect = canvas.getBoundingClientRect();
+		tuniform.iMouse.value.z = (e.clientX - rect.left) / window.innerWidth * 2 - 1;
+		tuniform.iMouse.value.w = (e.clientY - rect.top) / window.innerHeight * -2 + 1;
+	});
+	renderer.domElement.addEventListener('touchend', function(e) {
 		var canvas = renderer.domElement;
 		var rect = canvas.getBoundingClientRect();
 		tuniform.iMouse.value.z = (e.clientX - rect.left) / window.innerWidth * 2 - 1;
