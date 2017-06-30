@@ -44,13 +44,13 @@
 					gl_Position = vec4( position, 1.0 );
 				}
 		</script>
-		<!-- orinal from https://www.shadertoy.com/view/Ms2SD1 -->
+		<!-- original from https://www.shadertoy.com/view/Ms2SD1 -->
 		<script id="fragment-shader" type="no-js">
 			uniform float iGlobalTime;
 			uniform vec2 iResolution;
 			uniform vec4 iMouse;
 
-		const int NUM_STEPS = 8;
+		const int NUM_STEPS = 2;
 		const float PI	 	= 3.1415;
 		const float EPSILON	= 1e-3;
 		float EPSILON_NRM	= 0.1 / iResolution.x;

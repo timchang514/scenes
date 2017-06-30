@@ -19,10 +19,6 @@ function init() {
 	camera.lookAt(scene.position);
 
 	controls = new THREE.OrbitControls(camera)
-	controls.enablePan = false;
-	controls.minDistance = 1000.0;
-	controls.maxDistance = 5000.0;
-	controls.target.set( 0, 500, 0 );
 	renderer = new THREE.WebGLRenderer();
 	renderer.setClearColor(0xc4c4c4);
 	renderer.setSize(window.innerWidth, window.innerHeight);
@@ -44,25 +40,25 @@ function init() {
 		}
 	};
 
-	// Mouse position in - 1 to 1
-	renderer.domElement.addEventListener('mousedown', function(e) {
-		var canvas = renderer.domElement;
-		var rect = canvas.getBoundingClientRect();
-		tuniform.iMouse.value.x = (e.clientX - rect.left) / window.innerWidth * 2 - 1;
-		tuniform.iMouse.value.y = (e.clientY - rect.top) / window.innerHeight * -2 + 1;
-	});
-	renderer.domElement.addEventListener('mouseup', function(e) {
-		var canvas = renderer.domElement;
-		var rect = canvas.getBoundingClientRect();
-		tuniform.iMouse.value.z = (e.clientX - rect.left) / window.innerWidth * 2 - 1;
-		tuniform.iMouse.value.w = (e.clientY - rect.top) / window.innerHeight * -2 + 1;
-	});
-	// resize canvas function
-	window.addEventListener('resize',function() {
-		camera.aspect = window.innerWidth / window.innerHeight;
-		camera.updateProjectionMatrix();
-		renderer.setSize(window.innerWidth, window.innerHeight);
-	});
+	// // Mouse position in - 1 to 1
+	// renderer.domElement.addEventListener('mousedown', function(e) {
+	// 	var canvas = renderer.domElement;
+	// 	var rect = canvas.getBoundingClientRect();
+	// 	tuniform.iMouse.value.x = (e.clientX - rect.left) / window.innerWidth * 2 - 1;
+	// 	tuniform.iMouse.value.y = (e.clientY - rect.top) / window.innerHeight * -2 + 1;
+	// });
+	// renderer.domElement.addEventListener('mouseup', function(e) {
+	// 	var canvas = renderer.domElement;
+	// 	var rect = canvas.getBoundingClientRect();
+	// 	tuniform.iMouse.value.z = (e.clientX - rect.left) / window.innerWidth * 2 - 1;
+	// 	tuniform.iMouse.value.w = (e.clientY - rect.top) / window.innerHeight * -2 + 1;
+	// });
+	// // resize canvas function
+	// window.addEventListener('resize',function() {
+	// 	camera.aspect = window.innerWidth / window.innerHeight;
+	// 	camera.updateProjectionMatrix();
+	// 	renderer.setSize(window.innerWidth, window.innerHeight);
+	// });
 
 	tuniform.iResolution.value.x = window.innerWidth;
 	tuniform.iResolution.value.y = window.innerHeight;
@@ -75,6 +71,9 @@ function init() {
 	var mesh = new THREE.Mesh(
 		new THREE.PlaneBufferGeometry(window.innerWidth, window.innerHeight, 40), material
 	);
+	// var mesh = new THREE.Mesh(
+	// 	new THREE.SphereGeometry(20, 20, 30, 30),  material
+	// )
 	scene.add(mesh);
 }
 
@@ -89,4 +88,4 @@ function render(time) {
 	requestAnimationFrame(render);
 	renderer.render(scene, camera);
 }
-render();
+//render();
