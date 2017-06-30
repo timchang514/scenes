@@ -7,7 +7,7 @@
 
 // init camera, scene, renderer
 var scene, camera, controls, renderer, clock
-var tuniform
+var tuniform, water
 
 init()
 animate()
@@ -15,8 +15,8 @@ animate()
 function init() {
 	scene = new THREE.Scene();
 	camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-	camera.position.z = 100;
-	camera.lookAt(scene.position);
+	camera.position.z = 50;
+	camera.position.y = 130;
 
 	controls = new THREE.OrbitControls(camera)
 	renderer = new THREE.WebGLRenderer();
@@ -40,25 +40,25 @@ function init() {
 		}
 	};
 
-	// // Mouse position in - 1 to 1
-	// renderer.domElement.addEventListener('mousedown', function(e) {
-	// 	var canvas = renderer.domElement;
-	// 	var rect = canvas.getBoundingClientRect();
-	// 	tuniform.iMouse.value.x = (e.clientX - rect.left) / window.innerWidth * 2 - 1;
-	// 	tuniform.iMouse.value.y = (e.clientY - rect.top) / window.innerHeight * -2 + 1;
-	// });
-	// renderer.domElement.addEventListener('mouseup', function(e) {
-	// 	var canvas = renderer.domElement;
-	// 	var rect = canvas.getBoundingClientRect();
-	// 	tuniform.iMouse.value.z = (e.clientX - rect.left) / window.innerWidth * 2 - 1;
-	// 	tuniform.iMouse.value.w = (e.clientY - rect.top) / window.innerHeight * -2 + 1;
-	// });
-	// // resize canvas function
-	// window.addEventListener('resize',function() {
-	// 	camera.aspect = window.innerWidth / window.innerHeight;
-	// 	camera.updateProjectionMatrix();
-	// 	renderer.setSize(window.innerWidth, window.innerHeight);
-	// });
+	// Mouse position in - 1 to 1
+	renderer.domElement.addEventListener('mousedown', function(e) {
+		var canvas = renderer.domElement;
+		var rect = canvas.getBoundingClientRect();
+		tuniform.iMouse.value.x = (e.clientX - rect.left) / window.innerWidth * 2 - 1;
+		tuniform.iMouse.value.y = (e.clientY - rect.top) / window.innerHeight * -2 + 1;
+	});
+	renderer.domElement.addEventListener('mouseup', function(e) {
+		var canvas = renderer.domElement;
+		var rect = canvas.getBoundingClientRect();
+		tuniform.iMouse.value.z = (e.clientX - rect.left) / window.innerWidth * 2 - 1;
+		tuniform.iMouse.value.w = (e.clientY - rect.top) / window.innerHeight * -2 + 1;
+	});
+	// resize canvas function
+	window.addEventListener('resize',function() {
+		camera.aspect = window.innerWidth / window.innerHeight;
+		camera.updateProjectionMatrix();
+		renderer.setSize(window.innerWidth, window.innerHeight);
+	});
 
 	tuniform.iResolution.value.x = window.innerWidth;
 	tuniform.iResolution.value.y = window.innerHeight;
@@ -68,13 +68,13 @@ function init() {
 		vertexShader: document.getElementById('vertex-shader').textContent,
 		fragmentShader: document.getElementById('fragment-shader').textContent
 	});
-	var mesh = new THREE.Mesh(
+	water = new THREE.Mesh(
 		new THREE.PlaneBufferGeometry(window.innerWidth, window.innerHeight, 40), material
 	);
-	// var mesh = new THREE.Mesh(
-	// 	new THREE.SphereGeometry(20, 20, 30, 30),  material
+	// water = new THREE.Mesh(
+	// 	new THREE.PlaneBufferGeometry(window.innerWidth, window.innerHeight, 40)
 	// )
-	scene.add(mesh);
+	scene.add(water);
 }
 
 function animate() {

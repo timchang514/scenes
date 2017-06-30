@@ -32,11 +32,9 @@
 		<div id="container"></div>
 		<script src="build/three.js"></script>
 		<script src="src/js/controls/OrbitControls.js"></script>
-		<script src="src/js/loaders/ColladaLoader.js"></script>
 		<script src="src/js/shaders/OceanShaders.js"></script>
 		<script src="src/js/renderers/Projector.js"></script>
 		<script src="src/js/renderers/CanvasRenderer.js"></script>
-		<script src="src/js/libs/stats.min.js"></script>
 
 		<!-- THIS is OPENGL Shading language scripts -->
 		<script id="vertex-shader" type="no-js">
@@ -50,7 +48,7 @@
 			uniform vec2 iResolution;
 			uniform vec4 iMouse;
 
-		const int NUM_STEPS = 2;
+		const int NUM_STEPS = 8;
 		const float PI	 	= 3.1415;
 		const float EPSILON	= 1e-3;
 		float EPSILON_NRM	= 0.1 / iResolution.x;
