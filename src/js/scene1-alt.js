@@ -75,9 +75,6 @@ function init() {
 	water = new THREE.Mesh(
 		new THREE.PlaneBufferGeometry(400, 300, 40), material
 	);
-	// water = new THREE.Mesh(
-	// 	new THREE.PlaneBufferGeometry(400, 300, 40)
-	// )
 	scene.add(water);
 }
 
@@ -89,8 +86,6 @@ function animate() {
 // draw animation
 function render(time) {
 	tuniform.iGlobalTime.value += clock.getDelta();
-	tuniform.iMouse.value.x += 0.1
-	// console.log(tuniform.iMouse.value.y)
 	requestAnimationFrame(render);
 	renderer.render(scene, camera);
 }
